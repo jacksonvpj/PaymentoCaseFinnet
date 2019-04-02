@@ -1,0 +1,6 @@
+import br.com.finnet
+
+model{
+	List<Pagamento> pagamentoList
+}
+json tmpl.pagamento(pagamentoList)

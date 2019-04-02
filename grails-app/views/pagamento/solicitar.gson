@@ -1,0 +1,17 @@
+import br.com.finnet
+
+model{
+	Pagamento pagamento
+}
+json{
+	id pagamento.id
+	cedente pagamento.cedente
+	valor pagamento.valor
+	numParcelas pagamento.numParcelas
+	dataSolicitacao pagamento.dataSolicitacao
+
+	if(pagamento.dataVencimento){
+		dataVencimento pagamento.dataVencimento
+	}
+	
+}
