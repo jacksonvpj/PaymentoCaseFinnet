@@ -21,8 +21,10 @@ Instalação do Grails
 Utilizar script SDKMAN de instação do grails https://grails.org/download.html 
 
 - For Windows
-Baixar Binario, unzip e definir GRAILS_HOME
+Baixar Binario, unzip e definir variável de ambiente GRAILS_HOME=path_home_grails
 https://github.com/grails/grails-core/releases/download/v3.3.9/grails-3.3.9.zip
+
+Adicione GRAILS_HOME/bin na variável de ambiente PATH
 
 Por ser um projeto baseado no Gradle é possivel utiliza-lo no IntelliJ Community Edition
 
