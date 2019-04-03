@@ -30,5 +30,19 @@ Após a instalação, abra o terminal na raiz do projeto e execute
 
 > `grails run-app`
 
-Use postman para execução do projeto baseado na documentação do SWAGGER
-http://localhost:8080/api/
+Use postman para execução do projeto:
+
+ 1. Obtenha o token rest do usuario de exempli
+    http://localhost:8080/api/login
+    json login
+    {
+      "username":"admin",
+      "password":"admin"
+    }
+    
+ 2. Execute um dos seviços abaixo com toke Bearer <token>:
+http://localhost:8080/api/pagamento/solicitar
+http://localhost:8080/api/pagamento/consultar
+http://localhost:8080/api/pagamento/cancelar
+
+
