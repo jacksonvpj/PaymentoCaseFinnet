@@ -14,11 +14,13 @@ class UrlMappings {
         "500"(view: '/error')
         "404"(view: '/notFound')
 
-        "/$controller/$action?/$id?"{
+        "/api/$controller/$action?/$id?"{
             constraints {
                 // apply constraints here
             }
         }
+
+        "/apidoc/$action?/$id?"(controller: "apiDoc", action: "getDocuments")
         
     }
 }

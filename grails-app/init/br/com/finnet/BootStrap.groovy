@@ -1,12 +1,15 @@
 package br.com.finnet
 
-class BootStrap {
+import grails.util.Environment
 
+class BootStrap {
+	def springSecurityService
     def init = { servletContext ->
-    	
-		// def role1 = new Authority(authority:"ROLE_USER").save flush:true
-		// def user1 = new Usuario(username:"admin",password:"admin").save flush:true
-		// UsuarioAuthority.create(user1,role1)
+    	if (Environment.current != Environment.TEST) {
+			def role1 = new Authority(authority:"ROLE_USER").save flush:true, failOnError:true
+			def user1 = new Usuario(username:"admin", password: springSecurityService.encodePassword("admin"), enabled: true).save flush:true, failOnError:true
+			UsuarioAuthority.create(user1,role1)    		
+    	}
     }
 
     def destroy = {

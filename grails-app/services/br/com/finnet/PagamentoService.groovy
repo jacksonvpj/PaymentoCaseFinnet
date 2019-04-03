@@ -19,28 +19,35 @@ class PagamentoService {
     }
 
     def consultar(PagamentoCommand params = null) { 
-    	def lista = []
+    	def lista = []	
 
     	use(groovy.time.TimeCategory) {
     		if(params){
 	    		def duration
-
-				duration = params.dataSolicitacaoFim - params.dataSolicitacaoInicio
-				if (duration.days > 30) {
-					params.errors.reject('consulta.periodo.invalido', ['Data de Solicitação'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-				}
-				duration = params.dataVencimentoFim - params.dataVencimentoInicio
-				if (duration.days > 30) {
-					params.errors.reject('consulta.periodo.invalido', ['Data de Vencimento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-				}
-				duration = params.dataPagamentoFim - params.dataPagamentoInicio
-				if (duration.days > 30) {
-					params.errors.reject('consulta.periodo.invalido', ['Data de Pagamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-				}
-				duration = params.dataCancelamentoFim - params.dataCancelamentoInicio
-				if (duration.days > 30) {
-					params.errors.reject('consulta.periodo.invalido', ['Data de Cancelamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-				}
+	    		if(params.dataSolicitacaoInicio && params.dataSolicitacaoFim){
+					duration = params.dataSolicitacaoFim - params.dataSolicitacaoInicio
+					if (duration.days > 30) {
+						params.errors.reject('consulta.periodo.invalido', ['Data de Solicitação'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+					}	    			
+	    		}
+	    		if(params.dataVencimentoInicio && params.dataVencimentoFim){
+					duration = params.dataVencimentoFim - params.dataVencimentoInicio
+					if (duration.days > 30) {
+						params.errors.reject('consulta.periodo.invalido', ['Data de Vencimento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+					}	    			
+	    		}
+	    		if(params.dataPagamentoInicio && params.dataPagamentoFim){
+					duration = params.dataPagamentoFim - params.dataPagamentoInicio
+					if (duration.days > 30) {
+						params.errors.reject('consulta.periodo.invalido', ['Data de Pagamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+					}	    			
+	    		}
+	    		if(params.dataPagamentoInicio && params.dataPagamentoFim){
+					duration = params.dataCancelamentoFim - params.dataCancelamentoInicio
+					if (duration.days > 30) {
+						params.errors.reject('consulta.periodo.invalido', ['Data de Cancelamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+					}	    			
+	    		}
     		}
 		}
 
@@ -49,7 +56,10 @@ class PagamentoService {
 
 	    		createAlias('cedente', 'c')
 
-	    		eq 'usuario', springSecurityService.principal
+	    		usuario{
+	    			eq 'id', springSecurityService.principal.id	
+	    		}
+	    		
 
 	    		if (params?.pagamentoId){
 	    			eq 'id', params.pagamentoId

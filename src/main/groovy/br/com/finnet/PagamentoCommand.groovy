@@ -5,7 +5,6 @@ import grails.validation.Validateable
 class PagamentoCommand implements Validateable {
 	Long pagamentoId
 	Long cedenteId
-	Long usuarioId
 
 	Date dataSolicitacaoInicio
 	Date dataSolicitacaoFim
@@ -18,5 +17,18 @@ class PagamentoCommand implements Validateable {
 
 	Date dataCancelamentoInicio
 	Date dataCancelamentoFim
+
+	static constraints = {
+		pagamentoId nullable:true
+		cedenteId nullable:true
+		dataSolicitacaoInicio nullable:true
+		dataSolicitacaoFim nullable:true
+		dataVencimentoInicio nullable:true
+		dataVencimentoFim nullable:true
+		dataPagamentoInicio nullable:true
+		dataPagamentoFim nullable:true
+		dataCancelamentoInicio nullable:true
+		dataCancelamentoFim nullable:true
+	}
 
 }

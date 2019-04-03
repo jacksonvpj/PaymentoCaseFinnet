@@ -22,6 +22,7 @@ apply plugin:"org.grails.plugins.views-json"
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
+    maven { url "https://dl.bintray.com/ajay-kumar/plugins" }
 }
 
 dependencies {
@@ -62,6 +63,7 @@ dependencies {
     compile "org.grails.plugins:spring-security-core:3.2.3"
     compile "org.grails.plugins:spring-security-rest:2.0.0.RC1"
     compile "org.grails.plugins:spring-security-rest-gorm:2.0.0.RC1"
+    compile 'org.grails.plugins:swagger:1.0.0'
 
 }
 

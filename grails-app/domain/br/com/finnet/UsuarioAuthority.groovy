@@ -64,19 +64,10 @@ class UsuarioAuthority implements Serializable {
 	}
 
 	static constraints = {
-		// authority validator: { Authority r, UsuarioAuthority ur ->
-		// 	if (ur.usuario?.id) {
-		// 		UsuarioAuthority.withNewSession {
-		// 			if (UsuarioAuthority.exists(ur.usuario.id, r.id)) {
-		// 				return ['userRole.exists']
-		// 			}
-		// 		}
-		// 	}
-		// }
+		authority unique: ['usuario']
 	}
 
 	static mapping = {
-		// id composite: ['usuario', 'authority']
 		version false
 	}
 }

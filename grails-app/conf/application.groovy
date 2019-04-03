@@ -7,22 +7,15 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
     [pattern: '/',               access: ['permitAll']],
     [pattern: '/error',          access: ['permitAll']],
     [pattern: '/index',          access: ['permitAll']],
-    [pattern: '/index.gsp',      access: ['permitAll']],
-    [pattern: '/shutdown',       access: ['permitAll']],
-    [pattern: '/dbconsole/**', 	 access: ['permitAll']],
-    [pattern: '/api/login',      access: ['permitAll']],
-    [pattern: '/api/logout',     access: ['isFullyAuthenticated()']],
-    [pattern: '/**',             access: ['isFullyAuthenticated()']]
+    [pattern: '/dbconsole/**',   access: ['permitAll']],
+    [pattern: '/apidoc/**',      access: ['permitAll']],
+    [pattern: '/api/**',         access: ['permitAll']],
+    [pattern: '/api/logout',     access: ['isFullyAuthenticated()']]
 ]
 
 grails.plugin.springsecurity.filterChain.chainMap = [
-    [pattern: '/**/favicon.ico', filters: 'none'],
-    [pattern: '/dbconsole/**', 	 filters: 'none'],
-    [pattern: '/api/**',    	 filters: 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter'], // Stateless chain
-    [pattern: '/**',        	 filters: 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter']   // Traditional chain
-]
-
-grails.plugin.springsecurity.filterChain.chainMap = [
+    [pattern: '/dbconsole/**',   filters: 'none'],
+    [pattern: '/apidoc/**',      filters: 'none'],
     [pattern: '/api/**', filters:'JOINED_FILTERS,-anonymousAuthenticationFilter,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter'],
 	[pattern: '/**', 	 filters:'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter']
 ]
