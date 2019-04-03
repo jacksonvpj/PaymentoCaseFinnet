@@ -41,8 +41,7 @@ Use postman para execução do projeto:
     }
     
  2. Execute um dos seviços abaixo com toke Bearer <token>:
-http://localhost:8080/api/pagamento/solicitar
-http://localhost:8080/api/pagamento/consultar
-http://localhost:8080/api/pagamento/cancelar
 
-
+> http://localhost:8080/api/pagamento/solicitar
+> http://localhost:8080/api/pagamento/consultar
+> http://localhost:8080/api/pagamento/cancelar
