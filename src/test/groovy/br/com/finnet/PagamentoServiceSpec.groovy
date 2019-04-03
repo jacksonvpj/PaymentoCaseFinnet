@@ -12,49 +12,63 @@ import grails.test.hibernate.HibernateSpec
 
 import grails.plugin.springsecurity.SpringSecurityService
 
+import org.hibernate.SessionFactory
+
 @Integration
 @Rollback
-class PagamentoServiceSpec extends Specification implements DataTest, ServiceUnitTest<PagamentoService>{
+class PagamentoServiceSpec extends Specification implements ServiceUnitTest<PagamentoService>{
 
-	@Autowired PagamentoService pagamentoService
-	@Autowired SpringSecurityService springSecurityService 
+	void setup() {
+		Pagamento.withTransaction{
+	    	new Usuario(username:'admin', password:'1wwwe23').save()
+			new Cedente(nome:'Cedente 1', cpfCnpj:"12333").save()
+		}
 
-	@Shared Usuario usuario
-
-	def setupSpec() {
-		mockDomain Cedente
-		mockDomain Usuario
-	}
-
-    def setup() {
-    	usuario = new Usuario(username:'administrator', password:'1wwwe23')
     }
 
-    def cleanup() {
-    }
 
     void "test sucessfull solicitar pagamento"() {
+    	given:
+			def mockService = Mock(SpringSecurityService)
+			Pagamento.withTransaction{
+				1 * mockService.getPrincipal() >> Usuario.findByUsername('admin')
+			}
+			service.springSecurityService = mockService
+
     	when:
-			def cedente = new Cedente(nome:'Cedente_1', cpfCnpj:"12333")
-    		def pagamento = new Pagamento (
-    			usuario: usuario,
-    			cedente: cedente,
-				valor: 12.3,
-				numParcelas: 1
-    		)
-    		pagamentoService.solicitar(pagamento)
+    		def pagamento
+    		Pagamento.withTransaction{
+		    	///def usuario = Usuario.findByUsername('administrator')
+				def cedente = Cedente.findByCpfCnpj("12333")
+
+	    		pagamento = new Pagamento (
+	    			cedente: cedente,
+					valor: 12.3,
+					numParcelas: 1
+	    		)
+	    		service.solicitar(pagamento)
+    		}
+
 
     	then:
+    		!pagamento.hasErrors()
     		pagamento.id
     		pagamento.dataCancelamento == null
     }
 
     void "test fails solicitar pagamento"() {
+    	given:
+			def mockService = Mock(SpringSecurityService)
+			Pagamento.withTransaction{
+				1 * mockService.getPrincipal() >> Usuario.findByUsername('admin')
+			}
+			service.springSecurityService = mockService
+
     	when:
     		def pagamento = new Pagamento (
 				valor: 12.3
     		)
-    		pagamentoService.solicitar(pagamento)
+    		service.solicitar(pagamento)
 
     	then:
     		!pagamento.id
@@ -63,32 +77,57 @@ class PagamentoServiceSpec extends Specification implements DataTest, ServiceUni
     }
 
     void "test cancelar pagamento"(){
+    	given:
+			def mockService = Mock(SpringSecurityService)
+			Pagamento.withTransaction{
+				2 * mockService.getPrincipal() >> Usuario.findByUsername('admin')
+			}
+			service.springSecurityService = mockService
+
 		when: 
-			def cedente = new Cedente(nome:'Cedente_1', cpfCnpj:"12333")
-    		def pagamento = new Pagamento (
-    			usuario: usuario,
-    			cedente: cedente,
-				valor: 12.3,
-				numParcelas: 1
-    		)
-    		pagamentoService.solicitar(pagamento)
-    		pagamentoService.cancelar(pagamento?.id)
+			def pagamento
+			Pagamento.withTransaction{
+				def cedente = Cedente.findByCpfCnpj("12333")
+	    		pagamento = new Pagamento (
+	    			cedente: cedente,
+					valor: 12.3,
+					numParcelas: 1
+	    		)
+	    		service.solicitar(pagamento)
+	    		service.cancelar(pagamento?.id)
+			}
 
 		then: 
 			pagamento.dataCancelamento != null
 
     }
 
-    // void "test pesquisar"(){
-    // 	when:
-    // 		[
-    // 			[valor: 12.3, numParcelas: 1],
-    // 			[valor: 1.3, numParcelas: 1]
-    // 			[valor: 10.3, numParcelas: 1]
-    // 		].each{
-    // 			new Pagamento()
-    // 		}
-    // 	then:
-    // }
+    void "test pesquisar"(){
+    	given:
+			def mockService = Mock(SpringSecurityService)
+			Pagamento.withTransaction{
+				def user3 = new Usuario(username:'user3', password:'1wwwe23').save()
+				4 * mockService.getPrincipal() >> user3
+			}
+			service.springSecurityService = mockService
+
+    	when:
+    		def lista = []
+    		Pagamento.withTransaction{
+	    		def cedente = Cedente.findByCpfCnpj("12333")
+	    		[
+	    			[cedente:cedente, valor: 12.3, numParcelas: 1],
+	    			[cedente:cedente, valor: 1.3, numParcelas: 1],
+	    			[cedente:cedente, valor: 10.3, numParcelas: 1]
+	    		].each{
+	    			service.solicitar(new Pagamento(it))
+	    		} 
+	    		lista = service.consultar()
+    		}
+
+    	then:    		
+    		lista.size()==3	
+    		
+    }
 
 }

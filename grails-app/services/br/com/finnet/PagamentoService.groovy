@@ -12,60 +12,63 @@ class PagamentoService {
     		pagamento.usuario = springSecurityService.principal	
     	}
     	
-
     	if(!pagamento.hasErrors()){
     		pagamento.save(flush:true)	
     	} 
     	
     }
 
-    def consultar(PagamentoCommand params) { 
+    def consultar(PagamentoCommand params = null) { 
     	def lista = []
+
     	use(groovy.time.TimeCategory) {
-    		def duration
-			duration = params.dataSolicitacaoFim - params.dataSolicitacaoInicio
-			if (duration.days > 30) {
-				params.errors.reject('consulta.periodo.invalido', ['Data de Solicitação'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-			}
-			duration = params.dataVencimentoFim - params.dataVencimentoInicio
-			if (duration.days > 30) {
-				params.errors.reject('consulta.periodo.invalido', ['Data de Vencimento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-			}
-			duration = params.dataPagamentoFim - params.dataPagamentoInicio
-			if (duration.days > 30) {
-				params.errors.reject('consulta.periodo.invalido', ['Data de Pagamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-			}
-			duration = params.dataCancelamentoFim - params.dataCancelamentoInicio
-			if (duration.days > 30) {
-				params.errors.reject('consulta.periodo.invalido', ['Data de Cancelamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
-			}
+    		if(params){
+	    		def duration
+
+				duration = params.dataSolicitacaoFim - params.dataSolicitacaoInicio
+				if (duration.days > 30) {
+					params.errors.reject('consulta.periodo.invalido', ['Data de Solicitação'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+				}
+				duration = params.dataVencimentoFim - params.dataVencimentoInicio
+				if (duration.days > 30) {
+					params.errors.reject('consulta.periodo.invalido', ['Data de Vencimento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+				}
+				duration = params.dataPagamentoFim - params.dataPagamentoInicio
+				if (duration.days > 30) {
+					params.errors.reject('consulta.periodo.invalido', ['Data de Pagamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+				}
+				duration = params.dataCancelamentoFim - params.dataCancelamentoInicio
+				if (duration.days > 30) {
+					params.errors.reject('consulta.periodo.invalido', ['Data de Cancelamento'] as Object[], 'Período da {0} não pode ser maior que 90 dias')
+				}
+    		}
 		}
 
-		if(!params.hasErrors()){
+		if(!params || !params.hasErrors()){
 	    	lista = Pagamento.withCriteria {
 
 	    		createAlias('cedente', 'c')
 
 	    		eq 'usuario', springSecurityService.principal
 
-	    		if (param.pagamentoId){
-	    			eq 'id', param.pagamentoId
+	    		if (params?.pagamentoId){
+	    			eq 'id', params.pagamentoId
 	    		} else {
 
-		    		if (param.cedenteId){
-		    			eq 'c.id', param.cedenteId
+		    		if (params?.cedenteId){
+		    			eq 'c.id', params.cedenteId
 		    		}
-		    		if (param.dataSolicitacaoInicio && param.dataSolicitacaoFim){
-		    			between 'dataSolicitacao', param.dataSolicitacaoInicio, param.dataSolicitacaoFim
+		    		if (params?.dataSolicitacaoInicio && params?.dataSolicitacaoFim){
+		    			between 'dataSolicitacao', params.dataSolicitacaoInicio, params.dataSolicitacaoFim
 		    		}
-		    		if (param.dataVencimentoInicio && param.dataVencimentoFim){
-		    			between 'dataVencimento', param.dataVencimentoInicio, param.dataVencimentoFim
+		    		if (params?.dataVencimentoInicio && params?.dataVencimentoFim){
+		    			between 'dataVencimento', params.dataVencimentoInicio, params.dataVencimentoFim
 		    		}
-		    		if (param.dataPagamentoInicio && param.dataPagamentoFim){
-		    			between 'dataPagamento', param.dataPagamentoInicio, param.dataPagamentoFim
+		    		if (params?.dataPagamentoInicio && params?.dataPagamentoFim){
+		    			between 'dataPagamento', params.dataPagamentoInicio, params.dataPagamentoFim
 		    		}
-		    		if (param.dataCancelamentoInicio && param.dataCancelamentoFim){
-		    			between 'dataCancelamento', param.dataCancelamentoInicio, param.dataCancelamentoFim
+		    		if (params?.dataCancelamentoInicio && params?.dataCancelamentoFim){
+		    			between 'dataCancelamento', params.dataCancelamentoInicio, params.dataCancelamentoFim
 		    		}
 
 	    		}
